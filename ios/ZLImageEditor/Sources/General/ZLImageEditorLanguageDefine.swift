@@ -4,8 +4,6 @@
 //
 //  Created by long on 2020/11/23.
 //
-//  Created by long on 2020/8/17.
-//
 //  Copyright (c) 2020 Long Zhang <495181165@qq.com>
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -41,11 +39,15 @@ import Foundation
     case korean
     case malay
     case italian
+    case indonesian
+    case portuguese
+    case spanish
+    case turkish
+    case arabic
+    case ukrainian
 }
 
-
 public struct ZLLocalLanguageKey: Hashable {
-    
     public let rawValue: String
     
     public init(rawValue: String) {
@@ -64,11 +66,26 @@ public struct ZLLocalLanguageKey: Hashable {
     /// Undo (还原)
     public static let revert = ZLLocalLanguageKey(rawValue: "revert")
     
+    /// Brightness (亮度)
+    public static let brightness = ZLLocalLanguageKey(rawValue: "brightness")
+    
+    /// Contrast (对比度)
+    public static let contrast = ZLLocalLanguageKey(rawValue: "contrast")
+    
+    /// Saturation (饱和度)
+    public static let saturation = ZLLocalLanguageKey(rawValue: "saturation")
+    
     /// Drag here to remove (拖到此处删除)
     public static let textStickerRemoveTips = ZLLocalLanguageKey(rawValue: "textStickerRemoveTips")
     
+    /// waiting... (正在处理...)
+    public static let hudLoading = ZLLocalLanguageKey(rawValue: "hudLoading")
 }
 
 func localLanguageTextValue(_ key: ZLLocalLanguageKey) -> String {
+    if let value = ZLImageEditorUIConfiguration.default().customLanguageConfig[key] {
+        return value
+    }
+    
     return Bundle.zlLocalizedString(key.rawValue)
 }
