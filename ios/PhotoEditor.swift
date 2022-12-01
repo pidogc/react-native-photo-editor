@@ -17,12 +17,18 @@ public enum ImageLoad: Error {
 }
 
 @objc(PhotoEditor)
-class PhotoEditor: NSObject, ZLEditImageControllerDelegate {
+class PhotoEditor: NSObject {
     var window: UIWindow?
     var bridge: RCTBridge!
     
     var resolve: RCTPromiseResolveBlock!
     var reject: RCTPromiseRejectBlock!
+
+    var resultImageView: UIImageView!
+    
+    var originalImage: UIImage?
+    
+    var resultImageEditModel: ZLEditImageModel?
     
     @objc(open:withResolver:withRejecter:)
     func open(options: NSDictionary, resolve:@escaping RCTPromiseResolveBlock,reject:@escaping RCTPromiseRejectBlock) -> Void {
@@ -32,12 +38,12 @@ class PhotoEditor: NSObject, ZLEditImageControllerDelegate {
             reject("DONT_FIND_IMAGE", "Dont find image", nil)
             return;
         }
-        
+
         getUIImage(url: path) { image in
             DispatchQueue.main.async {
                 //  set config
                 self.setConfiguration(options: options, resolve: resolve, reject: reject)
-                self.presentController(image: image)
+                self.presentController(image: image, editModel: self.resultImageEditModel ?? nil)
             }
         } reject: {_ in
             reject("LOAD_IMAGE_FAILED", "Load image failed: " + path, nil)
@@ -53,14 +59,13 @@ class PhotoEditor: NSObject, ZLEditImageControllerDelegate {
         self.reject = reject;
         
         // Stickers
-        let stickers = options["stickers"] as? [String] ?? []
+        let stickers: NSMutableArray = options["stickers"] as? NSMutableArray ?? []
         ZLImageEditorConfiguration.default().imageStickerContainerView = StickerView(stickers: stickers)
         
-        
         //Config
-        ZLImageEditorConfiguration.default().editDoneBtnBgColor = UIColor(red:255/255.0, green:238/255.0, blue:101/255.0, alpha:1.0)
+        ZLImageEditorUIConfiguration().editDoneBtnBgColor(UIColor(red:255/255.0, green:238/255.0, blue:101/255.0, alpha:1.0))
 
-        ZLImageEditorConfiguration.default().editImageTools = [.draw, .clip, .filter, .imageSticker, .textSticker, .adjust]
+        ZLImageEditorConfiguration.default().editImageTools([.draw, .clip, .imageSticker, .textSticker, .filter]).canRedo(true)
         
         //Filters Lut
         do {
@@ -70,12 +75,22 @@ class PhotoEditor: NSObject, ZLEditImageControllerDelegate {
             assertionFailure("\(error)")
         }
     }
+
+    @objc func continueEditImage() {
+      guard let oi = self.originalImage else {
+            return
+        }
+      presentController(image: oi,  editModel: self.resultImageEditModel)
+    }
     
-    private func presentController(image: UIImage) {
+    private func presentController(image: UIImage, editModel: ZLEditImageModel?) {
         if let controller = UIApplication.getTopViewController() {
             controller.modalTransitionStyle = .crossDissolve
-            
-            ZLEditImageViewController.showEditImageVC(parentVC:controller , image: image, delegate: self) { [weak self] (resImage, editModel) in
+
+            ZLEditImageViewController.showEditImageVC(parentVC:controller , image: image, editModel: editModel) { [weak self] (resImage, editModel) in
+
+                self?.resultImageEditModel = editModel
+
                 let documentsPath = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0] as String
                 
                 let destinationPath = URL(fileURLWithPath: documentsPath).appendingPathComponent(String(Int64(Date().timeIntervalSince1970 * 1000)) + ".png")
