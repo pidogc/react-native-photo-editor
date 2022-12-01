@@ -1,8 +1,9 @@
 import { NativeModules } from 'react-native';
 
 export type Options = {
-  path: String;
-  stickers: Array<String>;
+  path: string;
+  pathId: string;
+  stickers: Array<string>;
 };
 
 export type ErrorCode =
@@ -11,10 +12,12 @@ export type ErrorCode =
   | 'ACTIVITY_DOES_NOT_EXIST'
   | 'FAILED_TO_SAVE_IMAGE'
   | 'DONT_FIND_IMAGE'
-  | 'ERROR_UNKNOW';
+  | 'ERROR_UNKNOW'
+  | 'DONT_FIND_PATHID';
 
 type PhotoEditorType = {
-  open(option: Options): Promise<String>;
+  open(option: Options): Promise<string>;
+  onInitImageEditorModels(): void;
 };
 
 const { PhotoEditor } = NativeModules;

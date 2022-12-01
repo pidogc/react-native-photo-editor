@@ -27,6 +27,9 @@ exportObject = {
       }
     });
   },
+  onInitImageEditorModels: () => {
+    PhotoEditor.onInitImageEditorModels();
+  }
 };
 
 export default exportObject;

@@ -26,9 +26,10 @@ class PhotoEditor: NSObject {
 
     var resultImageView: UIImageView!
     
-    var originalImage: UIImage?
+    var originalImagePath: String?
     
-    var resultImageEditModel: ZLEditImageModel?
+    var resultImageEditModels: Dictionary<String, ZLEditImageModel> = [:]
+    
     
     @objc(open:withResolver:withRejecter:)
     func open(options: NSDictionary, resolve:@escaping RCTPromiseResolveBlock,reject:@escaping RCTPromiseRejectBlock) -> Void {
@@ -38,12 +39,20 @@ class PhotoEditor: NSObject {
             reject("DONT_FIND_IMAGE", "Dont find image", nil)
             return;
         }
+        
+        guard let pathId = options["pathId"] as? String else {
+            reject("DONT_FIND_PATHID", "Dont find pathId", nil)
+            return;
+        }
 
         getUIImage(url: path) { image in
             DispatchQueue.main.async {
+                
+                let editModel = self.getTargetResultImageEditModel(pathId: pathId)
+                
                 //  set config
                 self.setConfiguration(options: options, resolve: resolve, reject: reject)
-                self.presentController(image: image, editModel: self.resultImageEditModel ?? nil)
+                self.presentController(path: path, pathId: pathId,image: image, editModel: editModel)
             }
         } reject: {_ in
             reject("LOAD_IMAGE_FAILED", "Load image failed: " + path, nil)
@@ -52,6 +61,19 @@ class PhotoEditor: NSObject {
     
     func onCancel() {
         self.reject("USER_CANCELLED", "User has cancelled", nil)
+    }
+    
+    @objc(onInitImageEditorModels)
+    func onInitImageEditorModels() -> Void {
+        self.resultImageEditModels = [:]
+    }
+    
+    private func setResultImageEditModels(pathId: String, editModel: ZLEditImageModel?) {
+        self.resultImageEditModels[pathId] = editModel
+    }
+    
+    private func getTargetResultImageEditModel(pathId: String) -> ZLEditImageModel? {
+        return self.resultImageEditModels[pathId] ?? nil
     }
     
     private func setConfiguration(options: NSDictionary, resolve:@escaping RCTPromiseResolveBlock,reject:@escaping RCTPromiseRejectBlock) -> Void{
@@ -76,20 +98,13 @@ class PhotoEditor: NSObject {
         }
     }
 
-    @objc func continueEditImage() {
-      guard let oi = self.originalImage else {
-            return
-        }
-      presentController(image: oi,  editModel: self.resultImageEditModel)
-    }
-    
-    private func presentController(image: UIImage, editModel: ZLEditImageModel?) {
+    private func presentController(path: String, pathId: String, image: UIImage, editModel: ZLEditImageModel?) {
         if let controller = UIApplication.getTopViewController() {
             controller.modalTransitionStyle = .crossDissolve
 
             ZLEditImageViewController.showEditImageVC(parentVC:controller , image: image, editModel: editModel) { [weak self] (resImage, editModel) in
 
-                self?.resultImageEditModel = editModel
+                self?.setResultImageEditModels(pathId: pathId, editModel: editModel)
 
                 let documentsPath = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0] as String
                 
