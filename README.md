@@ -19,7 +19,7 @@ This lib is for personal use, so if you customize your style or change something
 
 > During the development of this package. I was thinking of moving it as part of [an earlier library](https://github.com/baronha/react-native-multiple-image-picker) that I finished. If the support community for this library was large enough, I would have to dismiss this idea immediately.
 
-> Previously this library used [Brightroom](https://github.com/muukii/Brightroom) as the native library for iOS. If you want to use Brightroom you can check it out [here](https://github.com/baronha/react-native-photo-editor/releases/tag/0.1.2).
+> Previously this library used [Brightroom](https://github.com/muukii/Brightroom) as the native library for iOS. If you want to use Brightroom you can check it out [here](https://github.com/pidogc/react-native-photo-editor/releases/tag/0.1.2).
 
 ## Feature 🙈
 
@@ -128,14 +128,14 @@ We can download the neutral LUT image from [lutCreator.js](https://sirserch.gith
 [Detailed documentations are available on here](https://www.notion.so/Creating-your-own-filters-LUT-d1942f2f5bcc44d88481d0a0cc4aacb3#d7bba7a891234ea48f1854b5e555366a)
 
 **IMPORTANT**
-You have to create `LUTs.bundle` and add all your LUT Photo(Re-name your LUT Photo follow this format: [LUT_64_FILTER_NAME](https://github.com/baronha/react-native-photo-editor/tree/master/resources/LUTs.bundle)) into `LUTs.bundle`. Then add `LUTs.bundle` into `Copy Bundle Resources`. [See detail](https://github.com/baronha/react-native-photo-editor/tree/master/example/ios)
+You have to create `LUTs.bundle` and add all your LUT Photo(Re-name your LUT Photo follow this format: [LUT_64_FILTER_NAME](https://github.com/pidogc/react-native-photo-editor/tree/master/resources/LUTs.bundle)) into `LUTs.bundle`. Then add `LUTs.bundle` into `Copy Bundle Resources`. [See detail](https://github.com/pidogc/react-native-photo-editor/tree/master/example/ios)
 
 ## Stickers 🤌
 
 ### Remote
 
 You need to pass an array of image urls to the sticker parameter in [options](#options)
-[Example](https://github.com/baronha/react-native-photo-editor/blob/dev/example/src/assets/data/stickers.json):
+[Example](https://github.com/pidogc/react-native-photo-editor/blob/dev/example/src/assets/data/stickers.json):
 
 ```
 [
@@ -151,7 +151,7 @@ You need to pass an array of image urls to the sticker parameter in [options](#o
 #### iOS
 
 You have to create `Stickers.bundle` and add all your sticker into `Stickers.bundle`. Then add `Stickers.bundle` into `Copy Bundle Resources`.
-[See detail](https://github.com/baronha/react-native-photo-editor/tree/master/example/ios)
+[See detail](https://github.com/pidogc/react-native-photo-editor/tree/master/example/ios)
 <br>
 <br>
 ![](resources/sticker_tutorial_ios.png)
@@ -159,7 +159,7 @@ You have to create `Stickers.bundle` and add all your sticker into `Stickers.bun
 #### Android
 
 You have to create `Stickers` folder inside `assets` folder. Then drag or copy all sticker in to `Sticker` folder.
-[See detail](https://github.com/baronha/react-native-photo-editor/tree/master/example/android/app/src/main/assets/Stickers)
+[See detail](https://github.com/pidogc/react-native-photo-editor/tree/master/example/android/app/src/main/assets/Stickers)
 <br>
 <br>
 ![](resources/sticker_tutorial_android.png)
@@ -171,8 +171,8 @@ You have to create `Stickers` folder inside `assets` folder. Then drag or copy a
 
 ## Performance
 
-We're trying to improve performance. If you have a better solution, please open a [issue](https://github.com/baronha/react-native-photo-editor/issues)
-or [pull request](https://github.com/baronha/react-native-photo-editor/pulls). Best regards!
+We're trying to improve performance. If you have a better solution, please open a [issue](https://github.com/pidogc/react-native-photo-editor/issues)
+or [pull request](https://github.com/pidogc/react-native-photo-editor/pulls). Best regards!
 
 ## Contributing
 
