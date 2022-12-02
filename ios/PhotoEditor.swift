@@ -69,7 +69,7 @@ class PhotoEditor: NSObject {
     
     private func setResultImageEditModels(editorModelKey: String, editModel: ZLEditImageModel?) {
 
-      guard let isNil = editorModelKey == nil else {
+        guard (editorModelKey == nil) else {
         return
       }
 
