@@ -5,7 +5,8 @@ let exportObject = {};
 
 const defaultOptions = {
   path: '',
-  pathId: '',
+  canRedo: false,
+  editorModelKey: '',
   stickers: [],
 };
 
@@ -15,6 +16,11 @@ exportObject = {
       ...defaultOptions,
       ...optionsEditor,
     };
+
+    if (options.canRedo && !options.editorModelKey) {
+      options.canRedo = false;
+    }
+
     return new Promise(async (resolve, reject) => {
       try {
         const response = await PhotoEditor.open(options);

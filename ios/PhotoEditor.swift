@@ -28,8 +28,7 @@ class PhotoEditor: NSObject {
     
     var originalImagePath: String?
     
-    var resultImageEditModels: Dictionary<String, ZLEditImageModel> = [:]
-    
+    var resultImageEditModels: Dictionary<String, ZLEditImageModel> = [:]    
     
     @objc(open:withResolver:withRejecter:)
     func open(options: NSDictionary, resolve:@escaping RCTPromiseResolveBlock,reject:@escaping RCTPromiseRejectBlock) -> Void {
@@ -40,19 +39,19 @@ class PhotoEditor: NSObject {
             return;
         }
         
-        guard let pathId = options["pathId"] as? String else {
-            reject("DONT_FIND_PATHID", "Dont find pathId", nil)
-            return;
-        }
+        let editorModelKey = options["editorModelKey"] as? String ?? ""
+
+         // openCanRedoMode
+         let canRedo: Bool = options["canRedo"] as? Bool ?? false
+                
+         let editModel = !canRedo ? nil : self.getTargetResultImageEditModel(pathId: pathId)
 
         getUIImage(url: path) { image in
             DispatchQueue.main.async {
                 
-                let editModel = self.getTargetResultImageEditModel(pathId: pathId)
-                
                 //  set config
-                self.setConfiguration(options: options, resolve: resolve, reject: reject)
-                self.presentController(path: path, pathId: pathId,image: image, editModel: editModel)
+                self.setConfiguration(options: options, canRedo: canRedo, resolve: resolve, reject: reject)
+                self.presentController(path: path, editorModelKey: editorModelKey, canRedo: canRedo, image: image, editModel: editModel)
             }
         } reject: {_ in
             reject("LOAD_IMAGE_FAILED", "Load image failed: " + path, nil)
@@ -68,25 +67,30 @@ class PhotoEditor: NSObject {
         self.resultImageEditModels = [:]
     }
     
-    private func setResultImageEditModels(pathId: String, editModel: ZLEditImageModel?) {
-        self.resultImageEditModels[pathId] = editModel
+    private func setResultImageEditModels(editorModelKey: String, editModel: ZLEditImageModel?) {
+
+      guard let isNil = editorModelKey == nil else {
+        return
+      }
+
+        self.resultImageEditModels[editorModelKey] = editModel
     }
     
-    private func getTargetResultImageEditModel(pathId: String) -> ZLEditImageModel? {
-        return self.resultImageEditModels[pathId] ?? nil
+    private func getTargetResultImageEditModel(editorModelKey: String) -> ZLEditImageModel? {
+        return self.resultImageEditModels[editorModelKey] ?? nil
     }
     
-    private func setConfiguration(options: NSDictionary, resolve:@escaping RCTPromiseResolveBlock,reject:@escaping RCTPromiseRejectBlock) -> Void{
+    private func setConfiguration(options: NSDictionary, canRedo: Bool, resolve:@escaping RCTPromiseResolveBlock,reject:@escaping RCTPromiseRejectBlock) -> Void{
         self.resolve = resolve;
         self.reject = reject;
         
         // Stickers
-        let stickers = options["stickers"] as? NSMutableArray ?? []
+        let stickers: NSMutableArray = options["stickers"] as? NSMutableArray ?? []
         
         //Config
         ZLImageEditorUIConfiguration().editDoneBtnBgColor(UIColor(red:255/255.0, green:238/255.0, blue:101/255.0, alpha:1.0))
 
-        ZLImageEditorConfiguration.default().imageStickerContainerView(StickerView(stickers: stickers)).editImageTools([.draw, .clip, .imageSticker, .textSticker, .filter]).canRedo(true)
+        ZLImageEditorConfiguration.default().imageStickerContainerView(StickerView(stickers: stickers)).editImageTools([.draw, .clip, .imageSticker, .textSticker, .filter]).canRedo(canRedo)
         
         //Filters Lut
         do {
@@ -97,13 +101,15 @@ class PhotoEditor: NSObject {
         }
     }
 
-    private func presentController(path: String, pathId: String, image: UIImage, editModel: ZLEditImageModel?) {
+    private func presentController(path: String, editorModelKey: String, canRedo: Bool, image: UIImage, editModel: ZLEditImageModel?) {
         if let controller = UIApplication.getTopViewController() {
             controller.modalTransitionStyle = .crossDissolve
 
             ZLEditImageViewController.showEditImageVC(parentVC:controller , image: image, editModel: editModel) { [weak self] (resImage, editModel) in
 
-                self?.setResultImageEditModels(pathId: pathId, editModel: editModel)
+                if (canRedo) {
+                  self?.setResultImageEditModels(editorModelKey: editorModelKey, editModel: editModel)
+                }
 
                 let documentsPath = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0] as String
                 

@@ -8,7 +8,8 @@ interface Stickers {
 
 export type Options = {
   path: string;
-  pathId: string;
+  canRedo: boolean;
+  editorModelKey?: string;
   stickers: Stickers[];
 };
 
@@ -18,8 +19,7 @@ export type ErrorCode =
   | 'ACTIVITY_DOES_NOT_EXIST'
   | 'FAILED_TO_SAVE_IMAGE'
   | 'DONT_FIND_IMAGE'
-  | 'ERROR_UNKNOW'
-  | 'DONT_FIND_PATHID';
+  | 'ERROR_UNKNOW';
 
 type PhotoEditorType = {
   open(option: Options): Promise<string>;
