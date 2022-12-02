@@ -1,8 +1,8 @@
 //
-//  ImageStickerContainerView.swift
-//  Example
+//  LKStickerView.swift
+//  StickerViewDemo
 //
-//  Created by long on 2020/11/20.
+//  Created by Luke on 2022/6/21.
 //
 
 import UIKit
@@ -20,11 +20,12 @@ class StickerView: UIView, ZLImageStickerContainerDelegate {
     var dataList : NSMutableArray = NSMutableArray() // 模型数组
     
     public init(stickers: NSMutableArray) {
-         super.init(frame: .zero)
-         self.setupUI()
-         self.datas = stickers
-         self.setupData()
-     }
+        super.init(frame: .zero)
+        self.setupUI()
+        self.datas = stickers
+        self.setupData()
+    }
+    
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
@@ -44,17 +45,17 @@ class StickerView: UIView, ZLImageStickerContainerDelegate {
     private func setupData(){
         // let fileManager = FileManager.default
         // datas = datas + fileManager.getListFileNameInBundle(bundlePath: "Stickers.bundle")
-
-              // 转模型
-       for item in datas {
-          let dict : NSDictionary = item as! NSDictionary
-          let title = dict["title"] as! String
-          let list  = dict["list"] as! Array<String>
-          let numColumns = dict["numColumns"] as! CGFloat
-          let model:StickerItemModel = StickerItemModel()
-          model.initModel(title: title, list: list, numColumns: numColumns)
-          dataList.add(model)
-       }
+        
+        // 转模型
+        for item in datas {
+            let dict : NSDictionary = item as! NSDictionary
+            let title = dict["title"] as! String
+            let list  = dict["list"] as! Array<String>
+            let numColumns = dict["numColumns"] as! CGFloat
+            let model:StickerItemModel = StickerItemModel()
+            model.initModel(title: title, list: list, numColumns: numColumns)
+            dataList.add(model)
+        }
     }
     
     func setupUI() {
@@ -116,8 +117,9 @@ class StickerView: UIView, ZLImageStickerContainerDelegate {
             make.left.right.bottom.equalTo(self.baseView)
         }
         
+        self.collectionView.register(StickerCell.self, forCellWithReuseIdentifier: NSStringFromClass(StickerCell.classForCoder()))
         self.collectionView.register(SectionHeaderCollectionReusableView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: "sectionHeader")
-
+        
         let tap = UITapGestureRecognizer(target: self, action: #selector(hideBtnClick))
         tap.delegate = self
         self.addGestureRecognizer(tap)
@@ -204,31 +206,23 @@ extension StickerView: UIGestureRecognizerDelegate {
 
 extension StickerView: UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        let column: CGFloat = 5
-        let spacing: CGFloat = 20 + 5 * (column - 1)
-        let w = (collectionView.frame.width - spacing) / column
-        return CGSize(width: w, height: w)
-    }
-
     // Section count
     func numberOfSections(in collectionView: UICollectionView) -> Int {
         self.dataList.count
-     }
+    }
     
-
     // Section item count
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         (self.dataList[section] as! StickerItemModel).list.count
     }
-
+    
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-       let column: CGFloat = (self.dataList[indexPath.section] as! StickerItemModel).numColumns
-       let spacing: CGFloat = 20 + 5 * (column - 1)
-       let w = (collectionView.frame.width - spacing) / column
-       let h = (collectionView.frame.width - spacing) / 5
-       return CGSize(width: w, height: h)
-     }
+        let column: CGFloat = (self.dataList[indexPath.section] as! StickerItemModel).numColumns
+        let spacing: CGFloat = 20 + 5 * (column - 1)
+        let w = (collectionView.frame.width - spacing) / column
+        let h = (collectionView.frame.width - spacing) / 5
+        return CGSize(width: w, height: h)
+    }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: NSStringFromClass(StickerCell.classForCoder()), for: indexPath) as! StickerCell
@@ -249,21 +243,21 @@ extension StickerView: UICollectionViewDataSource, UICollectionViewDelegateFlowL
             self.hide()
         }
     }
-
-     // Section title
+    
+    // Section title
     func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
-       if let sectionHeader = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: "sectionHeader", for: indexPath) as? SectionHeaderCollectionReusableView {
-           let title = (self.dataList[indexPath.section] as! StickerItemModel).title
-           sectionHeader.sectionHeaderLabel.text = title
-           return sectionHeader
-      }
-      
-       return UICollectionReusableView()
+        if let sectionHeader = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: "sectionHeader", for: indexPath) as? SectionHeaderCollectionReusableView {
+            let title = (self.dataList[indexPath.section] as! StickerItemModel).title
+            sectionHeader.sectionHeaderLabel.text = title
+            return sectionHeader
+        }
+        
+        return UICollectionReusableView()
     }
-   
+    
     // Secton title size
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
-       return CGSize(width:collectionView.frame.size.width, height:30.0)
+        return CGSize(width:collectionView.frame.size.width, height:30.0)
     }
     
     private func handleImageInCell(from urlString: String,completion:@escaping (UIImage) -> ()){
@@ -323,34 +317,35 @@ extension FileManager {
     }
 }
 
+
 // Item模型
 class StickerItemModel: NSObject {
     var title : String   = ""
     var list  : [String] = []
     var numColumns : CGFloat = 5
     
-   func initModel(title:String, list:[String], numColumns:CGFloat) {
-       self.title = title
-       self.list = list
+    func initModel(title:String, list:[String], numColumns:CGFloat) {
+        self.title = title
+        self.list = list
         self.numColumns = numColumns
     }
 }
 
+
 // SectionHeaderView
 class SectionHeaderCollectionReusableView : UICollectionReusableView {
-   var sectionHeaderLabel: UILabel!
+    var sectionHeaderLabel: UILabel!
     
-   override init(frame: CGRect) {
-       super.init(frame: frame)
-      sectionHeaderLabel = UILabel(frame: CGRect(x: 10, y: 8, width: frame.size.width, height: frame.size.height))
-       sectionHeaderLabel.font = UIFont.boldSystemFont(ofSize:CGFloat(14))
-       sectionHeaderLabel.textColor = UIColor(white: 1, alpha: 1)
-       self.addSubview(sectionHeaderLabel)
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        sectionHeaderLabel = UILabel(frame: CGRect(x: 10, y: 8, width: frame.size.width, height: frame.size.height))
+        sectionHeaderLabel.font = UIFont.boldSystemFont(ofSize:CGFloat(14))
+        sectionHeaderLabel.textColor = UIColor(white: 1, alpha: 1)
+        self.addSubview(sectionHeaderLabel)
     }
-   
-   required init?(coder: NSCoder) {
+    
+    required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 }
 
- 
