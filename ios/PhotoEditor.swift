@@ -81,7 +81,7 @@ class PhotoEditor: NSObject {
         self.reject = reject;
         
         // Stickers
-        let stickers: NSMutableArray = options["stickers"] as? NSMutableArray ?? []
+        let stickers = options["stickers"] as? [String] ?? []
         ZLImageEditorConfiguration.default().imageStickerContainerView = StickerView(stickers: stickers)
         
         //Config
