@@ -1,9 +1,15 @@
 import { NativeModules } from 'react-native';
 
+interface Stickers {
+  title: string;
+  numColumns: number;
+  list: string[];
+}
+
 export type Options = {
   path: string;
   pathId: string;
-  stickers: Array<String>;
+  stickers: Stickers[];
 };
 
 export type ErrorCode =
