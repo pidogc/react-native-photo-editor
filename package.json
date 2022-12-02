@@ -1,5 +1,5 @@
 {
-  "name": "ym-react-native-photo-editor",
+  "name": "ymh-react-native-photo-editor",
   "version": "0.0.1",
   "description": "Image editor using native modules for iOS and Android",
   "main": "lib/commonjs/index",
