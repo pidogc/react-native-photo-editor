@@ -1,6 +1,6 @@
 {
   "name": "ymh-react-native-photo-editor",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Image editor using native modules for iOS and Android",
   "main": "lib/commonjs/index",
   "module": "lib/module/index",

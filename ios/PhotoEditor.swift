@@ -44,7 +44,8 @@ class PhotoEditor: NSObject {
          // openCanRedoMode
          let canRedo: Bool = options["canRedo"] as? Bool ?? false
                 
-         let editModel = !canRedo ? nil : self.getTargetResultImageEditModel(pathId: pathId)
+         let editModel = !canRedo ? nil : self.getTargetResultImageEditModel(editorModelKey: editorModelKey)
+
 
         getUIImage(url: path) { image in
             DispatchQueue.main.async {
@@ -69,7 +70,7 @@ class PhotoEditor: NSObject {
     
     private func setResultImageEditModels(editorModelKey: String, editModel: ZLEditImageModel?) {
 
-        guard (editorModelKey == nil) else {
+      guard (editorModelKey != "") else {
         return
       }
 
