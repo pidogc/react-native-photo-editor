@@ -5,6 +5,7 @@ let exportObject = {};
 
 const defaultOptions = {
   path: '',
+  pathId: '',
   stickers: [],
 };
 
@@ -29,7 +30,7 @@ exportObject = {
   },
   onInitImageEditorModels: () => {
     PhotoEditor.onInitImageEditorModels();
-  }
+  },
 };
 
 export default exportObject;
